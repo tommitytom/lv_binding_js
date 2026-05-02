@@ -10,53 +10,37 @@ bool ispng (uint16_t* buf) {
 
 void convert_color_depth(uint8_t * img, uint32_t px_cnt)
 {
-#if LV_COLOR_DEPTH == 32
+    /* In LVGL v9 with LV_COLOR_DEPTH 32, the native format is XRGB8888/ARGB8888.
+     * lodepng decodes to RGBA, so we need to convert RGBA -> BGRA (ARGB8888 in little-endian).
+     * Swap red and blue channels. */
     lv_color32_t * img_argb = (lv_color32_t*)img;
-    lv_color_t c;
-    lv_color_t * img_c = (lv_color_t *) img;
     uint32_t i;
     for(i = 0; i < px_cnt; i++) {
-        c = lv_color_make(img_argb[i].ch.red, img_argb[i].ch.green, img_argb[i].ch.blue);
-        img_c[i].ch.red = c.ch.blue;
-        img_c[i].ch.blue = c.ch.red;
+        uint8_t tmp = img_argb[i].red;
+        img_argb[i].red = img_argb[i].blue;
+        img_argb[i].blue = tmp;
     }
-#elif LV_COLOR_DEPTH == 16
-    lv_color32_t * img_argb = (lv_color32_t*)img;
-    lv_color_t c;
-    uint32_t i;
-    for(i = 0; i < px_cnt; i++) {
-        c = lv_color_make(img_argb[i].ch.blue, img_argb[i].ch.green, img_argb[i].ch.red);
-        img[i*3 + 2] = img_argb[i].ch.alpha;
-        img[i*3 + 1] = c.full >> 8;
-        img[i*3 + 0] = c.full & 0xFF;
-    }
-#elif LV_COLOR_DEPTH == 8
-    lv_color32_t * img_argb = (lv_color32_t*)img;
-       lv_color_t c;
-       uint32_t i;
-       for(i = 0; i < px_cnt; i++) {
-           c = lv_color_make(img_argb[i].red, img_argb[i].green, img_argb[i].blue);
-           img[i*2 + 1] = img_argb[i].alpha;
-           img[i*2 + 0] = c.full
-       }
-#endif
 }
 
-static lv_res_t decoder_info(struct _lv_img_decoder_t* decoder, const void* src, lv_img_header_t* header) {
-    const lv_img_dsc_t_1* img_dsc = (const lv_img_dsc_t_1*)src;
+static lv_result_t decoder_info(lv_image_decoder_t * decoder, lv_image_decoder_dsc_t * dsc, lv_image_header_t * header) {
+    LV_UNUSED(decoder);
+    const lv_img_dsc_t_1* img_dsc = (const lv_img_dsc_t_1*)dsc->src;
     if(img_dsc->type == IMAGE_TYPE_PNG) {
-        header->always_zero = 0;
-        header->cf = img_dsc->header.cf;       /*Save the color format*/
-        header->w = img_dsc->header.w;         /*Save the color width*/
-        header->h = img_dsc->header.h;         /*Save the color height*/
-        return LV_RES_OK;
+        header->magic = LV_IMAGE_HEADER_MAGIC;
+        header->cf = img_dsc->header.cf;
+        header->w = img_dsc->header.w;
+        header->h = img_dsc->header.h;
+        header->stride = img_dsc->header.stride;
+        header->flags = 0;
+        header->reserved_2 = 0;
+        return LV_RESULT_OK;
     }
 
-    return LV_RES_INV;
+    return LV_RESULT_INVALID;
 };
 
 void lv_png_init(void)
 {
-    lv_img_decoder_t * dec = lv_img_decoder_create();
-    lv_img_decoder_set_info_cb(dec, decoder_info);
+    lv_image_decoder_t * dec = lv_image_decoder_create();
+    lv_image_decoder_set_info_cb(dec, decoder_info);
 };

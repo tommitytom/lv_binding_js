@@ -24,6 +24,5 @@ void NativeRenderInit (JSContext* ctx, JSValue ns) {
 
     NativeThemeInit(ctx, obj);
 
-    lv_init();
-    lv_png_init();
+    lv_init(); // idempotent in v9 — safe to call if already initialized
 };
