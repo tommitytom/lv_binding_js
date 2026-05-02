@@ -37,7 +37,7 @@ static JSValue NativeCompSetPoints(JSContext *ctx, JSValueConst this_val, int ar
                     JS_ToInt32(ctx, &second, second_value);
 
                     num += 1;
-                    points.push_back({ .x = static_cast<lv_coord_t>(first), .y = static_cast<lv_coord_t>(second) });
+                    points.push_back({ .x = static_cast<int32_t>(first), .y = static_cast<int32_t>(second) });
                 }
 
                 JS_FreeValue(ctx, first_value);
