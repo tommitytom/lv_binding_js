@@ -12,7 +12,7 @@ export default class ViewConfig implements LvgljsComponentConfig<ViewProps, View
     return instance;
   }
   commitMount(instance, newProps: ViewProps, internalInstanceHandle) {}
-  commitUpdate(instance, updatePayload, oldProps: ViewProps, newProps: ViewProps, finishedWork) {
+  commitUpdate(instance, oldProps: ViewProps, newProps: ViewProps, finishedWork) {
     instance.setProps(newProps, oldProps);
   }
   commitUnmount(instance) {}

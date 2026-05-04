@@ -13,7 +13,7 @@ export default class ButtonConfig implements LvgljsComponentConfig<ButtonProps, 
     return instance;
   }
   commitMount(instance, newProps: ButtonProps, internalInstanceHandle) {}
-  commitUpdate(instance, updatePayload, oldProps: ButtonProps, newProps: ButtonProps, finishedWork) {
+  commitUpdate(instance, oldProps: ButtonProps, newProps: ButtonProps, finishedWork) {
     instance.setProps(newProps, oldProps);
   }
   setProps(newProps: ButtonProps, oldProps: ButtonProps) {}

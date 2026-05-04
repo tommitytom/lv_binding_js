@@ -14,7 +14,7 @@ export default class ArcConfig implements LvgljsComponentConfig<ArcProps, ArcCom
     return instance;
   }
   commitMount(instance, newProps: ArcProps, internalInstanceHandle) {}
-  commitUpdate(instance, updatePayload, oldProps: ArcProps, newProps: ArcProps, finishedWork) {
+  commitUpdate(instance, oldProps: ArcProps, newProps: ArcProps, finishedWork) {
     instance.setProps(newProps, oldProps);
   }
   setProps(newProps: ArcProps, oldProps: ArcProps) {}

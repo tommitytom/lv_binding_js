@@ -13,7 +13,7 @@ export default class GIFConfig implements LvgljsComponentConfig<GIFProps, GIFCom
     return instance;
   }
   commitMount(instance, newProps: GIFProps, internalInstanceHandle) {}
-  commitUpdate(instance, updatePayload, oldProps: GIFProps, newProps: GIFProps, finishedWork) {
+  commitUpdate(instance, oldProps: GIFProps, newProps: GIFProps, finishedWork) {
     instance.setProps(newProps, oldProps);
   }
   setProps(newProps: GIFProps, oldProps: GIFProps) {}
