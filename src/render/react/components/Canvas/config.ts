@@ -13,7 +13,7 @@ export default class CanvasConfig implements LvgljsComponentConfig<CanvasProps, 
     return instance;
   }
   commitMount(instance, newProps: CanvasProps, internalInstanceHandle) {}
-  commitUpdate(instance, updatePayload, oldProps: CanvasProps, newProps: CanvasProps, finishedWork) {
+  commitUpdate(instance, oldProps: CanvasProps, newProps: CanvasProps, finishedWork) {
     instance.setProps(newProps, oldProps);
   }
   setProps(newProps: CanvasProps, oldProps: CanvasProps) {}

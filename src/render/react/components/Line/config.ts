@@ -13,7 +13,7 @@ export default class LineConfig implements LvgljsComponentConfig<LineProps, Line
     return instance;
   }
   commitMount(instance, newProps: LineProps, internalInstanceHandle) {}
-  commitUpdate(instance, updatePayload, oldProps: LineProps, newProps: LineProps, finishedWork) {
+  commitUpdate(instance, oldProps: LineProps, newProps: LineProps, finishedWork) {
     instance.setProps(newProps, oldProps);
   }
   setProps(newProps: LineProps, oldProp: LineProps) {}

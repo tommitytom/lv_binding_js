@@ -12,7 +12,7 @@ export default class TextareaConfig implements LvgljsComponentConfig<TextAreaPro
     return instance;
   }
   commitMount(instance, newProps: TextAreaProps, internalInstanceHandle) {}
-  commitUpdate(instance, updatePayload, oldProps: TextAreaProps, newProps: TextAreaProps, finishedWork) {
+  commitUpdate(instance, oldProps: TextAreaProps, newProps: TextAreaProps, finishedWork) {
     instance.setProps(newProps, oldProps);
   }
   commitUnmount(instance) {}

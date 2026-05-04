@@ -1,6 +1,10 @@
 import { getComponentByTagName } from "../../components/config";
 import { unRegistEvent } from "../event";
 import Reconciler from "react-reconciler";
+import {
+  DefaultEventPriority,
+  NoEventPriority,
+} from "react-reconciler/constants";
 
 let id = 1;
 
@@ -14,29 +18,31 @@ export const getInstance = (uid) => {
   return instanceMap[uid];
 };
 
+const noop = () => {};
+
+let currentUpdatePriority = NoEventPriority;
+
 const HostConfig = {
+  supportsMutation: true,
+  supportsPersistence: false,
+  supportsHydration: false,
+  isPrimaryRenderer: true,
+  supportsMicrotasks: typeof queueMicrotask === "function",
+  scheduleMicrotask:
+    typeof queueMicrotask === "function" ? queueMicrotask : undefined,
+  noTimeout: -1,
+  scheduleTimeout: setTimeout,
+  cancelTimeout: clearTimeout,
+
   now: Date.now,
-  getPublicInstance: (instance) => {
-    //for supporting refs
-    return instance;
-  },
-  getRootHostContext: () => {
-    let context = {
-      name: "rootnode",
-    };
-    return context;
-  },
-  prepareForCommit: () => {},
-  resetAfterCommit: () => {},
-  getChildHostContext: () => {
-    return {};
-  },
-  shouldSetTextContent: function (type, props) {
-    return false;
-    return (
-      typeof props.children === "string" || typeof props.children === "number"
-    );
-  },
+  getPublicInstance: (instance) => instance,
+  getRootHostContext: () => ({ name: "rootnode" }),
+  getChildHostContext: () => ({}),
+  prepareForCommit: () => null,
+  resetAfterCommit: noop,
+  preparePortalMount: noop,
+  shouldSetTextContent: () => false,
+
   createInstance: (
     type,
     newProps,
@@ -56,43 +62,23 @@ const HostConfig = {
     instanceMap[uid] = instance;
     return instance;
   },
-  createTextInstance: (
-    text,
-    rootContainerInstance,
-    context,
-    workInProgress,
-  ) => {
-    return null;
-    // const { createInstance } = getComponentByTagName('Text');
-    // const uid = getUid()
+  createTextInstance: () => null,
 
-    // return createInstance(
-    //   {
-    //     text
-    //   },
-    //   rootContainerInstance,
-    //   context,
-    //   workInProgress,
-    //   uid
-    // );
-  },
   appendInitialChild: (parent, child) => {
     parent.appendChild(child);
   },
-  appendChild(parent, child) {
+  appendChild: (parent, child) => {
     parent.appendChild(child);
   },
-  finalizeInitialChildren: (yueElement, type, props) => {
-    return true;
-  },
+  finalizeInitialChildren: () => true,
   insertBefore: (parent, child, beforeChild) => {
     parent.insertBefore(child, beforeChild);
   },
-  supportsMutation: true,
-  appendChildToContainer: function (container, child) {
+
+  appendChildToContainer: (container, child) => {
     container.add(child);
   },
-  insertInContainerBefore: (container, child, beforeChild) => {
+  insertInContainerBefore: (container, child) => {
     container.add(child);
   },
   removeChildFromContainer: (container, child) => {
@@ -101,37 +87,73 @@ const HostConfig = {
       child.close();
     }
   },
-  prepareUpdate(instance, oldProps, newProps) {
-    return true;
+  clearContainer: (container) => {
+    for (const child of container) {
+      if (child.close) child.close();
+      container.delete(child);
+    }
   },
-  commitUpdate: function (
-    instance,
-    updatePayload,
-    type,
-    oldProps,
-    newProps,
-    finishedWork,
-  ) {
+
+  commitUpdate: (instance, type, oldProps, newProps, internalHandle) => {
     const { commitUpdate } = getComponentByTagName(type);
-    return commitUpdate(
-      instance,
-      updatePayload,
-      oldProps,
-      newProps,
-      finishedWork,
-    );
+    return commitUpdate(instance, oldProps, newProps, internalHandle);
   },
-  commitTextUpdate(textInstance, oldText, newText) {
+  commitTextUpdate: (textInstance, oldText, newText) => {
     textInstance.setText(newText);
   },
-  removeChild(parent, child) {
+  commitMount: (instance, type, newProps, internalInstanceHandle) => {
+    const { commitMount } = getComponentByTagName(type);
+    return commitMount(instance, newProps, internalInstanceHandle);
+  },
+
+  removeChild: (parent, child) => {
     parent?.removeChild(child);
     unRegistEvent(child.uid);
     delete instanceMap[child.uid];
   },
-  commitMount: function (instance, type, newProps, internalInstanceHandle) {
-    const { commitMount } = getComponentByTagName(type);
-    return commitMount(instance, newProps, internalInstanceHandle);
+  detachDeletedInstance: noop,
+
+  // Event priority (React 19 replaced getCurrentEventPriority with this trio)
+  setCurrentUpdatePriority: (priority) => {
+    currentUpdatePriority = priority;
+  },
+  getCurrentUpdatePriority: () => currentUpdatePriority,
+  resolveUpdatePriority: () =>
+    currentUpdatePriority !== NoEventPriority
+      ? currentUpdatePriority
+      : DefaultEventPriority,
+  shouldAttemptEagerTransition: () => false,
+  trackSchedulerEvent: noop,
+  resolveEventType: () => null,
+  resolveEventTimeStamp: () => -1.1,
+  bindToConsole: (_methodName, args) => args,
+  rendererPackageName: "lvgljs",
+  rendererVersion: "1.0.0",
+  extraDevToolsConfig: null,
+
+  // Scope / form / blur hooks (no-ops for non-DOM renderer)
+  getInstanceFromNode: () => null,
+  prepareScopeUpdate: noop,
+  getInstanceFromScope: () => null,
+  beforeActiveInstanceBlur: noop,
+  afterActiveInstanceBlur: noop,
+  resetFormInstance: noop,
+  requestPostPaintCallback: noop,
+
+  // Resource preload / view-transition (React 19) — no-ops
+  maySuspendCommit: () => false,
+  preloadInstance: () => true,
+  startSuspendingCommit: noop,
+  suspendInstance: noop,
+  waitForCommitToBeReady: () => null,
+  NotPendingTransition: null,
+  HostTransitionContext: {
+    $$typeof: Symbol.for("react.context"),
+    Provider: null,
+    Consumer: null,
+    _currentValue: null,
+    _currentValue2: null,
+    _threadCount: 0,
   },
 };
 

@@ -105,10 +105,16 @@ export type LvgljsComponentConfig<ComponentProps, ComponentInstance> = Pick<
   | "shouldSetTextContent"
   | "createInstance"
   | "commitMount"
-  | "commitUpdate"
-  | "commitUpdate"
   | "insertBefore"
   | "appendInitialChild"
   | "appendChild"
   | "removeChild"
-> & { tagName: string };
+> & {
+  tagName: string;
+  commitUpdate(
+    instance: ComponentInstance,
+    oldProps: ComponentProps,
+    newProps: ComponentProps,
+    internalHandle: any,
+  ): void;
+};

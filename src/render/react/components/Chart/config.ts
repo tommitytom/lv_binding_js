@@ -13,7 +13,7 @@ export default class ChartConfig implements LvgljsComponentConfig<ChartProps, Ch
     return instance;
   }
   commitMount(instance, newProps: ChartProps, internalInstanceHandle) {}
-  commitUpdate(instance, updatePayload, oldProps: ChartProps, newProps: ChartProps, finishedWork) {
+  commitUpdate(instance, oldProps: ChartProps, newProps: ChartProps, finishedWork) {
     instance.setProps(newProps, oldProps);
   }
   setProps(newProps: ChartProps, oldProps: ChartProps) {}
