@@ -6,6 +6,7 @@ import {
   handleEvent,
   setStyle,
   styleGetterProp,
+  type LvKey,
 } from "../config";
 import { StyleProps } from "../../core/style";
 
@@ -71,8 +72,7 @@ export type CommonProps = {
     target: any,
     currentTarget: any,
     stopPropogation: () => void,
-    /** LV_KEY_* code (e.g. LV_KEY_UP=17, LV_KEY_DOWN=18, LV_KEY_RIGHT=19, LV_KEY_LEFT=20) */
-    key: number,
+    key: LvKey,
   }) => void;
 };
 
