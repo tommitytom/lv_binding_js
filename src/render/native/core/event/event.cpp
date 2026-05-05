@@ -58,4 +58,5 @@ void NativeEventWrapInit (JSContext* ctx) {
     NativeNormalEventWrapInit(ctx);
     NativeValueChangeEventWrapInit(ctx);
     NativeClickEventWrapInit(ctx);
+    NativeKeyEventWrapInit(ctx);
 };

@@ -5,7 +5,7 @@ Button::Button(std::string uid, lv_obj_t* parent): BasicComponent(uid) {
     this->type = COMP_TYPE_BUTTON;
 
     this->uid = uid;
-    this->instance = lv_obj_create(parent != nullptr ? parent : GetWindowInstance());
+    this->instance = lv_button_create(parent != nullptr ? parent : GetWindowInstance());
 
     lv_group_add_obj(lv_group_get_default(), this->instance);
 
