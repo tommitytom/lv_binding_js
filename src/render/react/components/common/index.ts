@@ -57,6 +57,23 @@ export type CommonProps = {
     currentTarget: any,
     stopPropogation: () => void,
   }) => void;
+  onFocus?: (event: {
+    target: any,
+    currentTarget: any,
+    stopPropogation: () => void,
+  }) => void;
+  onBlur?: (event: {
+    target: any,
+    currentTarget: any,
+    stopPropogation: () => void,
+  }) => void;
+  onKey?: (event: {
+    target: any,
+    currentTarget: any,
+    stopPropogation: () => void,
+    /** LV_KEY_* code (e.g. LV_KEY_UP=17, LV_KEY_DOWN=18, LV_KEY_RIGHT=19, LV_KEY_LEFT=20) */
+    key: number,
+  }) => void;
 };
 
 export type OnChangeEvent = {
@@ -171,6 +188,15 @@ export const CommonComponentApi = function ({
     },
     onReleased(fn) {
       handleEvent(comp, fn, EVENTTYPE_MAP.EVENT_RELEASED);
+    },
+    onFocus(fn: any) {
+      handleEvent(comp, fn, EVENTTYPE_MAP.EVENT_FOCUSED);
+    },
+    onBlur(fn: any) {
+      handleEvent(comp, fn, EVENTTYPE_MAP.EVENT_DEFOCUSED);
+    },
+    onKey(fn: any) {
+      handleEvent(comp, fn, EVENTTYPE_MAP.EVENT_KEY);
     },
   };
 };
