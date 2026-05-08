@@ -171,7 +171,7 @@ static JSValue NativeAnimateStart(JSContext *ctx, JSValueConst this_val, int arg
         dura_value = JS_GetPropertyStr(ctx, argv[0], "duration");
         if (JS_IsNumber(dura_value)) {
             JS_ToInt32(ctx, &duration, dura_value);
-            lv_anim_set_time(animate, duration);
+            lv_anim_set_duration(animate, duration);
         }
         JS_FreeValue(ctx, dura_value);
 

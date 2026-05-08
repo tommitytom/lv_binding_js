@@ -3,6 +3,7 @@
 #include "native/components/component.hpp"
 #include "native/core/animate/animate.hpp"
 #include "native/core/dimensions/dimensions.hpp"
+#include "native/core/group/group.hpp"
 #include "native/core/refresh/refresh.hpp"
 #include "native/core/theme/theme.hpp"
 
@@ -18,12 +19,13 @@ void NativeRenderInit (JSContext* ctx, JSValue ns) {
 
     NativeAnimateInit(ctx, obj);
 
+    NativeGroupInit(ctx, obj);
+
     NativeDimensionsInit(ctx, obj);
 
     NativeRenderUtilInit(ctx, obj);
 
     NativeThemeInit(ctx, obj);
 
-    lv_init();
-    lv_png_init();
+    lv_init(); // idempotent in v9 — safe to call if already initialized
 };

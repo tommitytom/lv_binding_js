@@ -14,6 +14,7 @@ add_executable(lvgljs
     src/render/native/core/style/style.cpp
     src/render/native/core/style/font/font.cpp
     src/render/native/core/event/value_change/value_change.cpp
+    src/render/native/core/event/key/key.cpp
     src/render/native/core/event/normal/normal.cpp
     src/render/native/core/event/select/select.cpp
     src/render/native/core/event/click/click.cpp
@@ -29,6 +30,7 @@ add_executable(lvgljs
     src/render/native/core/img/img.cpp
     src/render/native/core/utils/utils.hpp
     src/render/native/core/animate/animate.cpp
+    src/render/native/core/group/group.cpp
     src/render/native/components/arc/arc.cpp
     src/render/native/components/arc/arc_wrap.cpp
     src/render/native/components/mask/mask.cpp

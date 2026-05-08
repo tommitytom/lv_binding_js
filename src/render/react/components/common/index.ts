@@ -6,6 +6,7 @@ import {
   handleEvent,
   setStyle,
   styleGetterProp,
+  type LvKey,
 } from "../config";
 import { StyleProps } from "../../core/style";
 
@@ -29,6 +30,7 @@ export type CommonProps = {
   scrollbarScrollingStyle?: StyleProps;
   onPressedStyle?: StyleProps;
   onReleasedStyle?: StyleProps;
+  onFocusedStyle?: StyleProps;
   children?: React.ReactNode;
   onClick?: (event: OnClickEvent) => void;
   onPressed?: (event: {
@@ -55,6 +57,22 @@ export type CommonProps = {
     target: any,
     currentTarget: any,
     stopPropogation: () => void,
+  }) => void;
+  onFocus?: (event: {
+    target: any,
+    currentTarget: any,
+    stopPropogation: () => void,
+  }) => void;
+  onBlur?: (event: {
+    target: any,
+    currentTarget: any,
+    stopPropogation: () => void,
+  }) => void;
+  onKey?: (event: {
+    target: any,
+    currentTarget: any,
+    stopPropogation: () => void,
+    key: LvKey,
   }) => void;
 };
 
@@ -144,6 +162,15 @@ export const CommonComponentApi = function ({
         oldStyleSheet: oldProps.onPressedStyle,
       });
     },
+    onFocusedStyle(styleSheet) {
+      setStyle({
+        comp,
+        styleSheet,
+        compName,
+        styleType: STYLE_TYPE.STATE_FOCUSED,
+        oldStyleSheet: oldProps.onFocusedStyle,
+      });
+    },
     onClick(fn) {
       handleEvent(comp, fn, EVENTTYPE_MAP.EVENT_CLICKED);
     },
@@ -161,6 +188,15 @@ export const CommonComponentApi = function ({
     },
     onReleased(fn) {
       handleEvent(comp, fn, EVENTTYPE_MAP.EVENT_RELEASED);
+    },
+    onFocus(fn: any) {
+      handleEvent(comp, fn, EVENTTYPE_MAP.EVENT_FOCUSED);
+    },
+    onBlur(fn: any) {
+      handleEvent(comp, fn, EVENTTYPE_MAP.EVENT_DEFOCUSED);
+    },
+    onKey(fn: any) {
+      handleEvent(comp, fn, EVENTTYPE_MAP.EVENT_KEY);
     },
   };
 };

@@ -13,7 +13,7 @@ export default class MaskConfig implements LvgljsComponentConfig<MaskProps, Mask
     return instance;
   }
   commitMount(instance, newProps: MaskProps, internalInstanceHandle) {}
-  commitUpdate(instance, updatePayload, oldProps: MaskProps, newProps: MaskProps, finishedWork) {
+  commitUpdate(instance, oldProps: MaskProps, newProps: MaskProps, finishedWork) {
     instance.setProps(newProps, oldProps);
   }
   setProps(newProps: MaskProps, oldProps: MaskProps) {}

@@ -5,12 +5,13 @@ GIF::GIF(std::string uid, lv_obj_t* parent): BasicComponent(uid) {
     this->type = COMP_TYPE_GIF;
 
     this->uid = uid;
-    this->instance = lv_gif_create(parent != nullptr ? parent : GetWindowInstance());
+    // NOTE(v9): lv_gif_create() was a third-party extension not available in v9.
+    // Falls back to lv_image_create — static images work, but GIF animation does not.
+    this->instance = lv_image_create(parent != nullptr ? parent : GetWindowInstance());
     lv_group_add_obj(lv_group_get_default(), this->instance);
 
-    lv_obj_clear_flag(this->instance, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
-    lv_obj_add_flag(this->instance, LV_OBJ_FLAG_EVENT_BUBBLE | LV_OBJ_FLAG_CLICKABLE);
-    lv_img_set_size_mode(this->instance, LV_IMG_SIZE_MODE_REAL);
+    lv_obj_remove_flag(this->instance, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
+    lv_obj_add_flag(this->instance, (lv_obj_flag_t)(LV_OBJ_FLAG_EVENT_BUBBLE | LV_OBJ_FLAG_CLICKABLE));
     lv_obj_set_user_data(this->instance, this);
     this->initStyle(LV_PART_MAIN);
 };
@@ -23,7 +24,7 @@ void GIF::setGIFBinary(uint8_t* buf, size_t len) {
     this->gif_buf = img_data;
 
     if (img_data != nullptr) {
-        lv_gif_set_src(this->instance, this->gif_desc);
+        lv_image_set_src(this->instance, this->gif_desc);
     }
 
     if (prev_buf != nullptr) {

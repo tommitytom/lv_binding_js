@@ -14,7 +14,7 @@ WRAPPED_SCROLL_INTO_VIEW(Line, "Line")
 WRAPPED_JS_CLOSE_COMPONENT(Line, "Line")
 
 static JSValue NativeCompSetPoints(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv) {
-    if (argc >= 1 && JS_IsArray(ctx, argv[0]) && JS_IsNumber(argv[1])) {
+    if (argc >= 1 && JS_IsArray(argv[0]) && JS_IsNumber(argv[1])) {
         COMP_REF* ref = (COMP_REF*)JS_GetOpaque(this_val, LineClassID);
 
         int32_t len;
@@ -25,11 +25,11 @@ static JSValue NativeCompSetPoints(JSContext *ctx, JSValueConst this_val, int ar
         JSValue second_value;
         int32_t first;
         int32_t second;
-        std::vector<lv_point_t> points;
+        std::vector<lv_point_precise_t> points;
 
         for (int i=0; i<len; i++) {
             item = JS_GetPropertyUint32(ctx, argv[0], i);
-            if (JS_IsArray(ctx, item)) {
+            if (JS_IsArray(item)) {
                 first_value = JS_GetPropertyUint32(ctx, item, 0);
                 second_value = JS_GetPropertyUint32(ctx, item, 1);
                 if (JS_IsNumber(first_value) && JS_IsNumber(second_value)) {
@@ -37,7 +37,7 @@ static JSValue NativeCompSetPoints(JSContext *ctx, JSValueConst this_val, int ar
                     JS_ToInt32(ctx, &second, second_value);
 
                     num += 1;
-                    points.push_back({ .x = static_cast<lv_coord_t>(first), .y = static_cast<lv_coord_t>(second) });
+                    points.push_back({ .x = static_cast<lv_value_precise_t>(first), .y = static_cast<lv_value_precise_t>(second) });
                 }
 
                 JS_FreeValue(ctx, first_value);

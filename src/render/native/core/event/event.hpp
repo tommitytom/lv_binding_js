@@ -31,6 +31,10 @@ void NativeValueChangeEventWrapInit (JSContext* ctx);
 
 JSValue WrapValueChangeEvent (lv_event_t* e, std::string uid);
 
+void NativeKeyEventWrapInit (JSContext* ctx);
+
+JSValue WrapKeyEvent (lv_event_t* e, std::string uid);
+
 typedef JSValue (*EventWrapFunc)(lv_event_t* e, std::string uid);
 
 static std::map<lv_event_code_t, EventWrapFunc> WrapEventDict {
@@ -47,6 +51,7 @@ static std::map<lv_event_code_t, EventWrapFunc> WrapEventDict {
     { LV_EVENT_CANCEL, &WrapNormalEvent },
     { LV_EVENT_READY, &WrapNormalEvent },
     { LV_EVENT_RELEASED, &WrapNormalEvent },
+    { LV_EVENT_KEY, &WrapKeyEvent },
 };
 
 #define WRAPPED_STOPPROPAGATION                                                                                                       \
@@ -54,8 +59,9 @@ static std::map<lv_event_code_t, EventWrapFunc> WrapEventDict {
         JSClassID _class_id;                                                                                                          \
         lv_event_t* ref = static_cast<lv_event_t*>(JS_GetAnyOpaque(this_val, &_class_id));                                            \
         if (ref) {                                                                                                                    \
-            ref->stop_bubbling = 1;                                                                                                   \
+            lv_event_stop_bubbling(ref);                                                                                              \
         }                                                                                                                             \
+        return JS_UNDEFINED;                                                                                                          \
     };                                                                                                                                \
                                                                                                                                       \
 

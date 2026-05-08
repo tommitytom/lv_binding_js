@@ -36,7 +36,7 @@ static JSValue SetTheme(JSContext* ctx, JSValueConst this_val, int argc, JSValue
         font_size = theme_default.font_normal;
     } else {
         JS_ToInt32(ctx, &font_size_ori, font_size_value);
-        font_size = &builtin_font_list[font_size_ori];
+        font_size = builtin_font_list[font_size_ori];
     }
 
     lv_theme_default_init(
