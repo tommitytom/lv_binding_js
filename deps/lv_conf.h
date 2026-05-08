@@ -445,7 +445,7 @@
  * Others
  *-----------*/
 
-#define LV_ENABLE_GLOBAL_CUSTOM 1
+#define LV_ENABLE_GLOBAL_CUSTOM 0
 #if LV_ENABLE_GLOBAL_CUSTOM
 /** Header to include for custom 'lv_global' function" */
 #define LV_GLOBAL_CUSTOM_INCLUDE <stdint.h>
@@ -1179,7 +1179,7 @@
  *==================*/
 
 /** Use SDL to open window on PC and handle mouse and keyboard. */
-#define LV_USE_SDL              0
+#define LV_USE_SDL              1
 #if LV_USE_SDL
 #define LV_SDL_INCLUDE_PATH     <SDL2/SDL.h>
 #define LV_SDL_RENDER_MODE      LV_DISPLAY_RENDER_MODE_DIRECT   /**< LV_DISPLAY_RENDER_MODE_DIRECT is recommended for best performance */

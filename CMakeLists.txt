@@ -1,9 +1,17 @@
 cmake_minimum_required(VERSION 3.16)
 
+cmake_policy(SET CMP0091 NEW)
+
 project(lvgljs LANGUAGES C CXX)
 
+if(MSVC)
+    # Match txiki's MSVC runtime (/MT) so static deps (ada, mbedtls, websockets, etc.)
+    # link cleanly into lvgljs.
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(LV_CONF_PATH ${CMAKE_CURRENT_SOURCE_DIR}/deps/lv_conf.h CACHE INTERNAL "LV_CONF_PATH")
+set(LV_BUILD_CONF_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps CACHE INTERNAL "LV_BUILD_CONF_DIR")
 
 set(BUILD_NATIVE OFF CACHE BOOL "Build wasm3 with native support")
 
@@ -77,7 +85,9 @@ add_executable(lvgljs
 )
 
 if(${CMAKE_BUILD_TYPE} MATCHES Simulator)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -Wall -g -ggdb -std=c++14")
+    if(NOT MSVC)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -Wall -g -ggdb -std=c++14")
+    endif()
     set(BUILD_WITH_MIMALLOC OFF) # TODO: SDL and mimalloc don't play well together
     add_definitions(-DIS_SIM)
     target_sources(lvgljs PRIVATE
@@ -85,16 +95,29 @@ if(${CMAKE_BUILD_TYPE} MATCHES Simulator)
         src/engine/hal/simulator/mouse_cursor_icon.c
     )
 else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -std=c++14")
+    if(NOT MSVC)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -std=c++14")
+    endif()
     add_definitions(-DIS_DEVICE)
     target_sources(lvgljs PRIVATE
         src/engine/hal/device/device.cpp
     )
 endif()
 
+# MSVC requires C++20 for designated initializers used throughout src/render.
+if(MSVC)
+    target_compile_options(lvgljs PRIVATE /std:c++20)
+endif()
+
+# On Windows, libuv transitively pulls in <windows.h>. Suppress its GDI macros
+# (Arc, Rectangle, etc.) and the legacy winsock so they don't collide with the
+# project's component class names and mbedtls/libuv ws2 use.
+if(WIN32)
+    target_compile_definitions(lvgljs PRIVATE NOGDI WIN32_LEAN_AND_MEAN)
+endif()
+
 add_subdirectory(deps/txiki EXCLUDE_FROM_ALL)
 add_subdirectory(deps/lvgl EXCLUDE_FROM_ALL)
-add_subdirectory(deps/lv_drivers EXCLUDE_FROM_ALL)
 
 target_include_directories(lvgljs PUBLIC
     ${LVGL_PATH}
@@ -113,11 +136,10 @@ target_include_directories(lvgljs PUBLIC
 target_link_libraries(lvgljs PUBLIC
     tjs
     lvgl
-    lv_drivers
 )
 
 if(${CMAKE_BUILD_TYPE} MATCHES Simulator)
     find_package(SDL2 REQUIRED)
-    target_include_directories(lv_drivers PUBLIC ${SDL2_INCLUDE_DIRS})
+    target_include_directories(lvgl PUBLIC ${SDL2_INCLUDE_DIRS})
     target_link_libraries(lvgljs PUBLIC ${SDL2_LIBRARIES})
 endif()

@@ -2,10 +2,8 @@
 
 #include <vector>
 
-extern "C" {
-    #include "lvgl.h"
-    #include "private.h"
-};
+#include "lvgl.h"
+#include "private.h"
 
 /* Available fonts from lv_conf.h: 12, 14, 16, 18, 22, 24, 32.
  * Unavailable sizes are mapped to the nearest available font. */

@@ -56,8 +56,7 @@ static const JSCFunctionListEntry ComponentProtoFuncs[] = {
     TJS_CFUNC_DEF("close", 0, NativeCompCloseComponent),
 };
 
-static const JSCFunctionListEntry ComponentClassFuncs[] = {
-};
+static const JSCFunctionListEntry ComponentClassFuncs[1] = {{}};
 
 static JSValue ProgressBarConstructor(JSContext *ctx, JSValueConst new_target, int argc, JSValueConst *argv) {
     JSValue proto;
@@ -129,7 +128,7 @@ void NativeComponentProgressBarInit (JSContext* ctx, JSValue ns) {
 
     JSValue obj = JS_NewCFunction2(ctx, ProgressBarConstructor, "ProgressBar", 1, JS_CFUNC_constructor, 0);
     JS_SetConstructor(ctx, obj, proto);
-    JS_SetPropertyFunctionList(ctx, obj, ComponentClassFuncs, countof(ComponentClassFuncs));
+    JS_SetPropertyFunctionList(ctx, obj, ComponentClassFuncs, 0);
     JS_DefinePropertyValueStr(ctx, ns, "ProgressBar", obj, JS_PROP_C_W_E);
 };
 

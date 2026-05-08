@@ -1,10 +1,8 @@
 #pragma once
 
-extern "C" {
-    #include "lvgl.h"
-    #include "private.h"
-    #include "utils.h"
-};
+#include "lvgl.h"
+#include "private.h"
+#include "utils.h"
 
 #include <map>
 #include <stdlib.h>

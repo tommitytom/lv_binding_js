@@ -67,8 +67,7 @@ static const JSCFunctionListEntry ComponentProtoFuncs[] = {
     TJS_CFUNC_DEF("close", 0, NativeCompCloseComponent),
 };
 
-static const JSCFunctionListEntry ComponentClassFuncs[] = {
-};
+static const JSCFunctionListEntry ComponentClassFuncs[1] = {{}};
 
 static JSValue CheckboxConstructor(JSContext *ctx, JSValueConst new_target, int argc, JSValueConst *argv) {
     JSValue proto;
@@ -140,7 +139,7 @@ void NativeComponentCheckboxInit (JSContext* ctx, JSValue ns) {
 
     JSValue obj = JS_NewCFunction2(ctx, CheckboxConstructor, "Checkbox", 1, JS_CFUNC_constructor, 0);
     JS_SetConstructor(ctx, obj, proto);
-    JS_SetPropertyFunctionList(ctx, obj, ComponentClassFuncs, countof(ComponentClassFuncs));
+    JS_SetPropertyFunctionList(ctx, obj, ComponentClassFuncs, 0);
     JS_DefinePropertyValueStr(ctx, ns, "Checkbox", obj, JS_PROP_C_W_E);
 };
 

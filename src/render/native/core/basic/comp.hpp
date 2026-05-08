@@ -4,10 +4,8 @@
 #include <map>
 #include <vector>
 
-extern "C" {
-    #include "lvgl.h"
-    #include "private.h"
-};
+#include "lvgl.h"
+#include "private.h"
 
 enum ECOMP_TYPE {
   COMP_TYPE_VIEW,
