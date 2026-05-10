@@ -6,4 +6,4 @@
 	url = https://github.com/lvgl/lv_drivers.git
 [submodule "deps/txiki"]
 	path = deps/txiki
-	url = https://github.com/tommitytom/txiki.js.git
+	url = git@github.com:tommitytom/txiki.js.git
