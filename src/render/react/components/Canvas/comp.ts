@@ -5,15 +5,22 @@ import {
   setStyle,
   styleGetterProp,
 } from "../config";
-import CanvasContext from "./context";
 
 const bridge = globalThis[Symbol.for('lvgljs')];
-const NativeButton = bridge.NativeRender.NativeComponents.Button;
+const NativeCanvas = bridge.NativeRender.NativeComponents.Canvas;
 
 export type CanvasProps = CommonProps & {
   onClick?: (event: OnClickEvent) => void;
   align?: { type: number; pos: [number, number] };
   alignTo?: { type: number; pos: [number, number]; parent: any };
+  /** When true (default), nearest-neighbor scaling — crisp pixels. */
+  nearestNeighbor?: boolean;
+  /**
+   * lv_image_inner_align value. Defaults to LV_IMAGE_ALIGN_CONTAIN (preserve
+   * aspect ratio, fit within widget). Other useful values:
+   *   LV_IMAGE_ALIGN_STRETCH = 13, LV_IMAGE_ALIGN_CONTAIN = 14, LV_IMAGE_ALIGN_COVER = 15.
+   */
+  innerAlign?: number;
 };
 
 function setCanvasProps(comp, newProps: CanvasProps, oldProps: CanvasProps) {
@@ -51,6 +58,14 @@ function setCanvasProps(comp, newProps: CanvasProps, oldProps: CanvasProps) {
         return;
       comp.alignTo(type, pos, parent);
     },
+    set nearestNeighbor(val: boolean) {
+      if (val === oldProps.nearestNeighbor) return;
+      comp.setNearestNeighbor(val !== false);
+    },
+    set innerAlign(val: number) {
+      if (val === oldProps.innerAlign) return;
+      if (typeof val === "number") comp.setInnerAlign(val);
+    },
   };
   Object.assign(setter, newProps);
   comp.dataset = {};
@@ -62,7 +77,7 @@ function setCanvasProps(comp, newProps: CanvasProps, oldProps: CanvasProps) {
   });
 }
 
-export class CanvasComp extends NativeButton {
+export class CanvasComp extends NativeCanvas {
   constructor({ uid }) {
     super({ uid });
     this.uid = uid;
@@ -77,21 +92,43 @@ export class CanvasComp extends NativeButton {
       },
     });
   }
+
   setProps(newProps: CanvasProps, oldProps: CanvasProps) {
     setCanvasProps(this, newProps, oldProps);
   }
-  insertBefore(child, beforeChild) {}
+
+  /**
+   * Push a new pixel buffer into the canvas. Bytes are copied into native
+   * storage; the JS ArrayBuffer is not retained.
+   *
+   * @param buffer  XRGB8888 bytes (LV_COLOR_FORMAT_NATIVE on LV_COLOR_DEPTH=32),
+   *                length must be `width * height * 4` (or larger; trailing
+   *                bytes are ignored).
+   */
+  setBuffer(buffer: ArrayBuffer | ArrayBufferView, width: number, height: number) {
+    const ab = ArrayBuffer.isView(buffer)
+      ? buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength)
+      : buffer;
+    super.setBuffer(ab, width, height);
+  }
+
+  invalidate() {
+    super.invalidate();
+  }
+
   static tagName = "Canvas";
+
+  // Canvas is a leaf widget — children are conceptually drawn into the buffer
+  // by the JS owner, not as LVGL siblings. Stub the child methods.
+  insertBefore(child, beforeChild) {}
   appendInitialChild(child) {}
-  appendChild(child) {
-    super.appendChild(child);
-  }
-  removeChild(child) {
-    super.removeChild(child);
-  }
+  appendChild(child) {}
+  removeChild(child) {}
+
   close() {
     super.close();
   }
+
   setStyle(style, type = 0x0000) {
     setStyle({
       comp: this,
@@ -103,19 +140,7 @@ export class CanvasComp extends NativeButton {
     });
   }
 
-  getContext() {
-    if (!this.ctx) {
-      this.ctx = new CanvasContext();
-    }
-    return this.ctx;
-  }
-  moveToFront() {
-    super.moveToFront();
-  }
-  moveToBackground() {
-    super.moveToBackground();
-  }
-  scrollIntoView() {
-    super.scrollIntoView();
-  }
+  moveToFront() { super.moveToFront(); }
+  moveToBackground() { super.moveToBackground(); }
+  scrollIntoView() { super.scrollIntoView(); }
 }

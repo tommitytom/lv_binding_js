@@ -66,6 +66,8 @@ add_executable(lvgljs
     src/render/native/components/button/button_wrap.cpp
     src/render/native/components/image/image.cpp
     src/render/native/components/image/image_wrap.cpp
+    src/render/native/components/canvas/canvas.cpp
+    src/render/native/components/canvas/canvas_wrap.cpp
     src/render/native/components/text/text.cpp
     src/render/native/components/text/text_wrap.cpp
     src/render/native/components/view/view.cpp
