@@ -28,6 +28,8 @@ void NativeComponentTextInit (JSContext* ctx, JSValue ns);
 
 void NativeComponentImageInit (JSContext* ctx, JSValue ns);
 
+void NativeComponentCanvasInit (JSContext* ctx, JSValue ns);
+
 void NativeComponentButtonInit (JSContext* ctx, JSValue ns);
 
 void NativeComponentArcInit (JSContext* ctx, JSValue ns);
