@@ -18,10 +18,15 @@ void BasicComponent::addEventListener (int eventType) {
 
 void BasicComponent::EventCallback (lv_event_t * event) {
     BasicComponent* instance = static_cast<BasicComponent*>(event->user_data);
-    std::string uid = instance->uid;
-    lv_event_code_t code = event->code;
-    if (instance->isEventRegist(static_cast<int>(code))) {
-        FireEventToJS(event, uid, code);
+    if (instance == nullptr) return;
+    try {
+        std::string uid = instance->uid;
+        lv_event_code_t code = event->code;
+        if (instance->isEventRegist(static_cast<int>(code))) {
+            FireEventToJS(event, uid, code);
+        }
+    } catch (...) {
+        // Swallow — exceptions across the C event dispatch are UB.
     }
 };
 
@@ -127,9 +132,9 @@ void BasicComponent::setTransition (JSContext* ctx, JSValue obj, lv_style_t* sty
 
 bool BasicComponent::ensureStyle (int32_t type) {
     lv_style_t* style;
-    bool is_new;
+    bool is_new = false;
     if (this->style_map.find(type) != this->style_map.end()) {
-        
+
     } else {
         style = static_cast<lv_style_t*>(style_pool.allocate());
         style_map[type] = style;
@@ -235,6 +240,14 @@ void BasicComponent::setBackgroundImage (uint8_t* buf, size_t buf_len, int32_t s
 
 BasicComponent::~BasicComponent () {
     comp_map.erase(this->uid);
+
+    // Detach our LVGL event callback so the lv_obj (which we deliberately do
+    // NOT delete here — see comment below) can't fire EventCallback with a
+    // dangling user_data pointer during later lv_display_delete teardown.
+    if (this->listening && this->instance != nullptr) {
+        lv_obj_remove_event_cb(this->instance, &BasicComponent::EventCallback);
+        this->listening = false;
+    }
 
     const lv_coord_t* ptr1 = this->grid_row_desc;
     const lv_coord_t* ptr2 = this->grid_column_desc;
