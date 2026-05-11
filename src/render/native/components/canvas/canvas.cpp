@@ -46,11 +46,17 @@ void Canvas::setBuffer(const uint8_t* data, size_t bytes, uint32_t w, uint32_t h
     dsc.data          = storage.data();
 
     lv_image_cache_drop(&dsc);
-    if (dimsChanged) {
-        lv_image_set_src(this->instance, &dsc);
-        hasBuffer = true;
-    }
+    // Set the src on every frame, not just when dims change. LVGL caches
+    // decoded image data keyed by the src pointer; even with cache_drop,
+    // some scaled/aligned image paths (notably LV_IMAGE_ALIGN_CONTAIN with
+    // integer scaling) retain a stale internal blit when the descriptor
+    // doesn't get re-applied. Re-applying set_src forces a full refresh
+    // and fixes intermittent stale-region artefacts seen with raw RGBA
+    // emulator framebuffers (e.g. LSDJ chain↔song page transitions).
+    lv_image_set_src(this->instance, &dsc);
+    hasBuffer = true;
     lv_obj_invalidate(this->instance);
+    (void)dimsChanged;
 }
 
 void Canvas::invalidate() {
