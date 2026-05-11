@@ -9,7 +9,14 @@ void FireEventToJS(lv_event_t* event, std::string uid, lv_event_code_t eventType
     int argc = 4;
 
     qrt = GetRuntime();
+    // Bail if the JS runtime has been torn down. Without this, any LVGL
+    // event that fires during widget destruction (DEFOCUSED, CHILD_DELETED,
+    // etc.) after the host has signalled "close the editor" segfaults on
+    // `qrt->ctx`. Hosts like Renoise that probe the view by opening then
+    // immediately closing it reproduce this reliably.
+    if (qrt == nullptr) return;
     ctx = qrt->ctx;
+    if (ctx == nullptr) return;
     std::map<lv_event_code_t, EventWrapFunc>::iterator iter = WrapEventDict.find(eventType);
 
     lv_obj_t *target = (lv_obj_t *)lv_event_get_target(event);
@@ -21,7 +28,11 @@ void FireEventToJS(lv_event_t* event, std::string uid, lv_event_code_t eventType
     if (target_instance) {
         target_uid = target_instance->uid;
     }
-    current_target_uid = current_target_instance->uid;
+    // Guard the current-target deref too — same teardown window can leave
+    // user_data null if the parent has already been cleaned.
+    if (current_target_instance) {
+        current_target_uid = current_target_instance->uid;
+    }
 
     if (iter != WrapEventDict.end()) {
         EventWrapFunc func = iter->second;
