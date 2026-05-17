@@ -8,7 +8,12 @@ View::View(std::string uid, lv_obj_t* parent): BasicComponent(uid) {
     lv_group_add_obj(lv_group_get_default(), this->instance);
 
     lv_obj_remove_flag(this->instance, LV_OBJ_FLAG_SCROLL_ON_FOCUS);
-    lv_obj_add_flag(this->instance, (lv_obj_flag_t)(LV_OBJ_FLAG_EVENT_BUBBLE | LV_OBJ_FLAG_CLICK_FOCUSABLE));
+    // CLICKABLE is what makes LVGL's pointer hit-test consider this widget;
+    // without it pointer clicks pass straight through and onClick props on
+    // React <View> never fire. (The keyboard path doesn't use hit-testing
+    // — focused-widget dispatch — which is why arrow + Enter has always
+    // worked even with this flag missing.)
+    lv_obj_add_flag(this->instance, (lv_obj_flag_t)(LV_OBJ_FLAG_EVENT_BUBBLE | LV_OBJ_FLAG_CLICK_FOCUSABLE | LV_OBJ_FLAG_CLICKABLE));
     lv_obj_set_user_data(this->instance, this);
     // this->initStyle(LV_PART_MAIN);
 };
