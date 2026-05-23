@@ -278,3 +278,7 @@ void BasicComponent::moveToBackground () {
 void BasicComponent::scrollIntoView () {
     lv_obj_scroll_to_view(this->instance, LV_ANIM_ON);
 };
+
+void BasicComponent::scrollToY (int32_t y, bool animate) {
+    lv_obj_scroll_to_y(this->instance, y, animate ? LV_ANIM_ON : LV_ANIM_OFF);
+};

@@ -82,4 +82,7 @@ export class ViewComp extends NativeView {
   scrollIntoView() {
     super.scrollIntoView();
   }
+  scrollToY(y: number, animate: boolean) {
+    super.scrollToY(y, animate);
+  }
 }
