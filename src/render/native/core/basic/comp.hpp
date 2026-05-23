@@ -84,6 +84,7 @@ class BasicComponent {
     void moveToFront ();
     void moveToBackground ();
     void scrollIntoView ();
+    void scrollToY (int32_t y, bool animate);
 
     void setAlign (int32_t align_type, int32_t x, int32_t y);
     void setAlignTo (int32_t align_type, int32_t x, int32_t y, BasicComponent* parent);

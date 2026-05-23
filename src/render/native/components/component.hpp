@@ -148,6 +148,19 @@ void NativeComponentMaskInit (JSContext* ctx, JSValue ns);
     };                                                                                                                      \
                                                                                                                             \
 
+#define WRAPPED_SCROLL_TO_Y(COMPONENT,COMPONENT_NAME)                                                                       \
+    static JSValue NativeCompScrollToY(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv) {               \
+        if (argc >= 2 && JS_IsNumber(argv[0])) {                                                                            \
+            int32_t y;                                                                                                      \
+            JS_ToInt32(ctx, &y, argv[0]);                                                                                   \
+            bool animate = JS_ToBool(ctx, argv[1]);                                                                         \
+            COMP_REF* ref = (COMP_REF*)JS_GetOpaque(this_val, COMPONENT##ClassID);                                          \
+            ((COMPONENT*)(ref->comp))->scrollToY(y, animate);                                                               \
+        }                                                                                                                   \
+        return JS_UNDEFINED;                                                                                                \
+    };                                                                                                                      \
+                                                                                                                            \
+
 #define WRAPPED_JS_SETSTYLE(COMPONENT,COMPONENT_NAME)                                                                       \
     static JSValue NativeCompSetStyle(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {                \
         if (argc >= 2 && JS_IsObject(argv[0]) && JS_IsArray(argv[1]) && JS_IsNumber(argv[2]) && JS_IsNumber(argv[3]) && JS_IsBool(argv[4])) {       \
