@@ -379,6 +379,17 @@ static void CompSetOverflow (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, 
     }
 };
 
+static void CompSetScrollDir (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, JSValue obj) {
+    int x;
+    JS_ToInt32(ctx, &x, obj);
+
+    // The JS `scroll-dir` enum (none/left/right/top/bottom/hor/ver/all) is
+    // bit-encoded to match lv_dir_t exactly, so the int casts straight across.
+    // LV_DIR_NONE disables drag-to-scroll and suppresses the scrollbar draw,
+    // while wheel and programmatic scrolls (which bypass scroll_dir) still work.
+    lv_obj_set_scroll_dir(comp, (lv_dir_t)x);
+};
+
 static void CompSetScrollSnapX (lv_obj_t* comp, lv_style_t* style, JSContext* ctx, JSValue obj) {
     int x;
     JS_ToInt32(ctx, &x, obj);
@@ -869,6 +880,7 @@ std::unordered_map<std::string, CompSetStyle*> StyleManager::styles {
     /* scroll */
     {"overflow-scrolling", &CompSetOverFlowScrolling},
     {"overflow", &CompSetOverflow},
+    {"scroll-dir", &CompSetScrollDir},
     {"scroll-snap-x", &CompSetScrollSnapX},
     {"scroll-snap-y", &CompSetScrollSnapY},
     {"scroll-enable-snap", &CompScrollEnableSnap},
