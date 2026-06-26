@@ -5,11 +5,10 @@
 #include <mutex>
 #include <string>
 
-extern "C" {
     #include "lvgl.h"
 
     #include "private.h"
-};
+
 
 template<size_t BlockSize, size_t BlockNum = 10>
 class MemoryPool {

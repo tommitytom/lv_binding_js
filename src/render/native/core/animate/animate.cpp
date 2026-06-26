@@ -285,8 +285,9 @@ static JSClassDef AnimateClass = {
     .finalizer = AnimateFinalizer,
 };
 
-static const JSCFunctionListEntry ComponentClassFuncs[] = {
-};
+// Animate registers no static (constructor-side) functions. A zero-length array
+// is a GCC/Clang extension MSVC rejects (C2466), so pass an empty list directly
+// at the call site below instead of declaring `ComponentClassFuncs[] = {}`.
 
 void NativeAnimateInit (JSContext* ctx, JSValue ns) {
     JS_NewClassID(JS_GetRuntime(ctx), &AnimateClassID);
@@ -297,6 +298,6 @@ void NativeAnimateInit (JSContext* ctx, JSValue ns) {
 
     JSValue obj = JS_NewCFunction2(ctx, AnimateConstructor, "Animate", 1, JS_CFUNC_constructor, 0);
     JS_SetConstructor(ctx, obj, proto);
-    JS_SetPropertyFunctionList(ctx, obj, ComponentClassFuncs, countof(ComponentClassFuncs));
+    JS_SetPropertyFunctionList(ctx, obj, nullptr, 0);
     JS_DefinePropertyValueStr(ctx, ns, "Animate", obj, JS_PROP_C_W_E);
 };

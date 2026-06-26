@@ -1,10 +1,9 @@
 #pragma once
 
-extern "C" {
     #include "lvgl.h"
 
     #include "private.h"
-};
+
 
 #include <vector>
 #include <string>
