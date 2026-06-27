@@ -568,8 +568,11 @@ void CompSetAnimation (
 
     dura_value = JS_GetPropertyStr(ctx, obj, "duration");
     if (JS_IsNumber(dura_value)) {
-        lv_anim_set_duration(animate, duration);
+        // Read the JS value into `duration` BEFORE using it — these two were
+        // swapped, so the animation duration was set from an uninitialised
+        // stack value (C4700) and the parsed value was then discarded.
         JS_ToInt32(ctx, &duration, dura_value);
+        lv_anim_set_duration(animate, duration);
     }
     JS_FreeValue(ctx, dura_value);
 
