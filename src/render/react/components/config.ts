@@ -69,15 +69,18 @@ export const STYLE_TYPE = {
   PART_TICKS: 0x060000,
   PART_CURSOR: 0x070000,
 
+  // Must match LVGL's lv_state_t enum (deps/lvgl/src/core/lv_obj_style.h) — these are used as
+  // lv_obj_add_style() state selectors, so a stale value binds a style to the wrong state (e.g. an
+  // onHoveredStyle that never triggers). LVGL 9.x shifted these up from the old v8 values.
   STATE_DEFAULT: 0x0000,
-  STATE_CHECKED: 0x0001,
-  STATE_FOCUSED: 0x0002,
-  STATE_FOCUS_KEY: 0x0004,
-  STATE_EDITED: 0x0008,
-  STATE_HOVERED: 0x0010,
-  STATE_PRESSED: 0x0020,
-  STATE_SCROLLED: 0x0040,
-  STATE_DISABLED: 0x0080,
+  STATE_CHECKED: 0x0004, // 1 << 2
+  STATE_FOCUSED: 0x0008, // 1 << 3
+  STATE_FOCUS_KEY: 0x0010, // 1 << 4
+  STATE_EDITED: 0x0020, // 1 << 5
+  STATE_HOVERED: 0x0040, // 1 << 6
+  STATE_PRESSED: 0x0080, // 1 << 7
+  STATE_SCROLLED: 0x0100, // 1 << 8
+  STATE_DISABLED: 0x0200, // 1 << 9
 };
 
 export const EDropdownlistDirection = {

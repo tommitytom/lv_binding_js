@@ -31,6 +31,7 @@ export type CommonProps = {
   onPressedStyle?: StyleProps;
   onReleasedStyle?: StyleProps;
   onFocusedStyle?: StyleProps;
+  onHoveredStyle?: StyleProps;
   children?: React.ReactNode;
   onClick?: (event: OnClickEvent) => void;
   onPressed?: (event: {
@@ -169,6 +170,15 @@ export const CommonComponentApi = function ({
         compName,
         styleType: STYLE_TYPE.STATE_FOCUSED,
         oldStyleSheet: oldProps.onFocusedStyle,
+      });
+    },
+    onHoveredStyle(styleSheet) {
+      setStyle({
+        comp,
+        styleSheet,
+        compName,
+        styleType: STYLE_TYPE.STATE_HOVERED,
+        oldStyleSheet: oldProps.onHoveredStyle,
       });
     },
     onClick(fn) {
