@@ -4,8 +4,6 @@
 
 static JSClassID AnimateClassID;
 
-static MemoryPool<sizeof(lv_anim_t), 30> animate_pool;
-
 std::unordered_map<int32_t, lv_anim_t*> animate_map;
 
 static std::unordered_map<std::string, lv_anim_path_cb_t> animate_funcs = {
@@ -103,7 +101,7 @@ static JSValue NativeAnimateStart(JSContext *ctx, JSValueConst this_val, int arg
         if (animate_map.find(uid) != animate_map.end()) {
             animate = animate_map.at(uid);
         } else {
-            animate = static_cast<lv_anim_t*>(animate_pool.allocate());
+            animate = new lv_anim_t();
             animate_map[uid] = animate;
         }
         lv_anim_init(animate);
@@ -273,7 +271,7 @@ static void AnimateFinalizer(JSRuntime *rt, JSValue val) {
     if (ref) {
         if (animate_map.find(ref->uid) != animate_map.end()) {
             lv_anim_t* animate = animate_map.at(ref->uid);
-            animate_pool.deallocate(static_cast<void*>(animate));
+            delete animate;
             animate_map.erase(ref->uid);
         }
         js_free_rt(rt, ref);

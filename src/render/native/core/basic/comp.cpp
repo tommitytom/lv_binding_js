@@ -4,8 +4,6 @@
 
 std::unordered_map<std::string, BasicComponent*> comp_map;
 
-static MemoryPool<sizeof(lv_style_t), 30> style_pool;
-
 void BasicComponent::addEventListener (int eventType) {
     if (!this->registeEvents.count(eventType)) {
         this->registeEvents.insert({ eventType, true });
@@ -131,7 +129,7 @@ bool BasicComponent::ensureStyle (int32_t type) {
     if (this->style_map.find(type) != this->style_map.end()) {
         
     } else {
-        style = static_cast<lv_style_t*>(style_pool.allocate());
+        style = new lv_style_t();
         style_map[type] = style;
         is_new = true;
     }
@@ -147,7 +145,7 @@ void BasicComponent::setStyle(JSContext* ctx, JSValue& obj, std::vector<std::str
         style = this->style_map.at(type);
     } else {
         is_new = true;
-        style = static_cast<lv_style_t*>(style_pool.allocate());
+        style = new lv_style_t();
         style_map[type] = style;
         this->initStyle(type);
     }
