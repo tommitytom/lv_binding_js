@@ -37,6 +37,8 @@ add_executable(lvgljs
     src/render/native/components/mask/mask_wrap.cpp
     src/render/native/components/gif/gif.cpp
     src/render/native/components/gif/gif_wrap.cpp
+    src/render/native/components/lottie/lottie.cpp
+    src/render/native/components/lottie/lottie_wrap.cpp
     src/render/native/components/chart/chart.cpp
     src/render/native/components/chart/chart_wrap.cpp
     src/render/native/components/tabview/tabview.cpp

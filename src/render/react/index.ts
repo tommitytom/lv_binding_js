@@ -14,6 +14,8 @@ import { DropdownlistComp, DropdownListProps } from "./components/Dropdownlist/c
 import DropdownlistConfig from "./components/Dropdownlist/config";
 import { GIFComp, GIFProps } from "./components/GIF/comp";
 import GIFConfig from "./components/GIF/config";
+import { LottieComp, LottieProps } from "./components/Lottie/comp";
+import LottieConfig from "./components/Lottie/config";
 import { ImageComp, ImageProps } from "./components/Image/comp";
 import ImageConfig from "./components/Image/config";
 import { InputComp, InputProps } from "./components/Input/comp";
@@ -64,6 +66,7 @@ export const Roller = registerComponent<RollerProps, RollerComp>(new RollerConfi
 export const Line = registerComponent<LineProps, LineComp>(new LineConfig());
 export const Calendar = registerComponent<CalendarProps, CalendarComp>(new CalendarConfig());
 export const GIF = registerComponent<GIFProps, GIFComp>(new GIFConfig());
+export const Lottie = registerComponent<LottieProps, LottieComp>(new LottieConfig());
 export const Tabs = registerComponent<TabsProps, TabsComp>(new TabsConfig());
 export const Chart = registerComponent<ChartProps, ChartComp>(new ChartConfig());
 export const Mask = registerComponent<MaskProps, MaskComp>(new MaskConfig());

@@ -55,6 +55,8 @@ void NativeComponentCalendarInit (JSContext* ctx, JSValue ns);
 
 void NativeComponentGIFInit (JSContext* ctx, JSValue ns);
 
+void NativeComponentLottieInit (JSContext* ctx, JSValue ns);
+
 void NativeComponentTabViewInit (JSContext* ctx, JSValue ns);
 
 void NativeComponentChartInit (JSContext* ctx, JSValue ns);
